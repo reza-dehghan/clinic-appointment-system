@@ -81,11 +81,14 @@ Each domain app follows the same architectural layout, making the codebase easie
 
 ## 📚 API Documentation
 
-API schema and interactive documentation are generated with **drf-spectacular**.
+API schema and interactive documentation are generated with `drf-spectacular`.
 
-- Swagger UI: `http://localhost:8000/api/docs/`
-- OpenAPI schema: `http://localhost:8000/api/schema/`
+| Documentation Type | Path |
+| :--- | :--- |
+| **Swagger UI** | [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/) |
+| **OpenAPI Schema** | [http://localhost:8000/api/schema/](http://localhost:8000/api/schema/) |
 
+*Note: Ensure the local Docker stack is running to access these links.*
 ## ⚙️ Environment Variables
 
 Configuration is loaded through `django-environ`. Copy `.env.example` to `.env` and update values for your local or deployment environment.
