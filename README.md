@@ -1,64 +1,66 @@
-# Mediva Cloud
+# 🚀 Mediva Cloud
 
-Backend API for clinic appointment scheduling, built with Django and Django REST Framework. Manages accounts, clinics, doctors, patients, and the appointment booking workflow behind a service/selector architecture.
+Backend API for clinic appointment scheduling, built with **Django** and **Django REST Framework**. The project manages accounts, clinics, doctors, patients, and appointment booking workflows using a clean **service/selector architecture** designed for maintainability, testability, and long-term extensibility.
 
-## Overview
+## ✨ Overview
 
-Clinics need to manage doctors, patients, and appointment slots without double-booking or inconsistent state. Mediva Cloud models these domains as separate Django apps and exposes them through a REST API, with business logic kept out of the views so the system stays easy to extend and test.
+Mediva Cloud addresses a common healthcare platform challenge: managing doctors, patients, and appointment scheduling without double-booking or inconsistent state. The system is organized into domain-focused Django apps and exposes a REST API with business logic kept out of views, helping the codebase stay clean, modular, and easier to scale.
 
-The project is backend-only, meant to be consumed by a frontend client or another service, and runs the same way locally and in containers via Docker Compose.
+This repository is **backend-only** and is intended to be consumed by a frontend client or another service. It supports both local development and containerized execution with Docker Compose.
 
-## Key Features
+## ✅ Key Features
 
 - JWT-based authentication and account management
-- Domain separation across `accounts`, `clinic`, `doctors`, `patients`, and `appointments`
-- Doctor schedule and appointment booking with validation at the service layer
-- Service/selector pattern separating writes, reads, and HTTP handling
+- Clear domain separation across `accounts`, `clinic`, `doctors`, `patients`, and `appointments`
+- Appointment booking and doctor availability validation at the service layer
+- Service/selector pattern for separating writes, reads, and HTTP orchestration
 - REST API built with Django REST Framework
-- OpenAPI schema and Swagger UI via drf-spectacular
-- Dockerized stack: Django, PostgreSQL, Gunicorn
-- Test suite with pytest, pytest-django, and factory_boy
-- Configuration fully driven by environment variables
+- OpenAPI schema generation and Swagger UI via `drf-spectacular`
+- Dockerized runtime using Django, PostgreSQL, and Gunicorn
+- Automated testing with `pytest`, `pytest-django`, and `factory_boy`
+- Environment-driven configuration for safer deployment workflows
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-| Layer | Tools |
-|---|---|
-| Backend | Python, Django, Django REST Framework |
+| Category | Technologies |
+| --- | --- |
+| Language | Python |
+| Framework | Django, Django REST Framework |
 | Database | PostgreSQL, psycopg (binary) |
-| API | drf-spectacular (OpenAPI / Swagger) |
 | Authentication | JWT |
+| API Documentation | drf-spectacular, OpenAPI, Swagger UI |
 | Testing | pytest, pytest-django, factory_boy |
-| Tooling | ruff, black, mypy, django-environ |
+| Code Quality | ruff, black, mypy |
+| Configuration | django-environ |
 | Deployment | Docker, Docker Compose, Gunicorn |
 
-## Architecture
+## 🧩 Architecture
 
-Each domain app (`accounts`, `clinic`, `doctors`, `patients`, `appointments`) follows the same internal structure:
+Each domain app (`accounts`, `clinic`, `doctors`, `patients`, `appointments`) follows a consistent internal structure:
 
-- **models.py** — schema and persistence.
-- **serializers.py** — input validation and output shaping. No business logic lives here.
-- **services.py** — write operations and business rules (creating an appointment, validating a doctor's availability, updating a record). This is where domain logic is owned.
-- **selectors.py** — read/query logic. Anything that fetches or filters data goes through a selector instead of being scattered across views or serializers.
-- **views.py** — thin orchestration: parse the request, call a service or selector, return a response. No business logic.
+- **`models.py`** — data schema and persistence
+- **`serializers.py`** — request validation and response shaping
+- **`services.py`** — business rules and write operations
+- **`selectors.py`** — query and read logic
+- **`views.py`** — thin API orchestration layer
 
-The split between services and selectors keeps writes and reads independently testable without going through the HTTP layer, and keeps query logic in one place instead of duplicated across views. Views stay small enough to read in a few seconds, which makes the API surface easier to reason about as new endpoints are added.
+This separation keeps business logic out of views and serializers, makes query logic reusable, and improves testability by allowing reads and writes to be validated independently of the HTTP layer.
 
-## Project Structure
+## 📁 Project Structure
 
-```
+```text
 mediva-cloud/
-├── accounts/             # Authentication, account lifecycle
-├── users/                # User/profile data
-├── clinic/               # Clinic entity and related logic
-├── doctors/               # Doctor profiles, schedules
+├── accounts/              # Authentication and account lifecycle
+├── users/                 # User/profile data
+├── clinic/                # Clinic entity and related logic
+├── doctors/               # Doctor profiles and schedules
 ├── patients/              # Patient records
-├── appointments/          # Booking workflow, scheduling rules
+├── appointments/          # Booking workflow and scheduling rules
 │   ├── models.py
 │   ├── serializers.py
-│   ├── services.py        # business logic / writes
-│   ├── selectors.py        # read/query logic
-│   ├── views.py            # thin API layer
+│   ├── services.py
+│   ├── selectors.py
+│   ├── views.py
 │   ├── urls.py
 │   └── tests/
 ├── config/
@@ -75,26 +77,24 @@ mediva-cloud/
 └── .env.example
 ```
 
-Every domain app under the root mirrors this layout: `models.py`, `serializers.py`, `services.py`, `selectors.py`, `views.py`, `urls.py`, `tests/`.
+Each domain app follows the same architectural layout, making the codebase easier to navigate and extend.
 
-## API Documentation
+## 📚 API Documentation
 
-Schema and documentation are generated by drf-spectacular and served once the app is running:
+API schema and interactive documentation are generated with **drf-spectacular**.
 
 - Swagger UI: `http://localhost:8000/api/docs/`
 - OpenAPI schema: `http://localhost:8000/api/schema/`
 
-Confirm exact paths against `config/urls.py` if the routing has changed.
+## ⚙️ Environment Variables
 
-## Environment Variables
-
-Configuration is loaded via `django-environ`. Copy `.env.example` to `.env` and set values for your environment.
+Configuration is loaded through `django-environ`. Copy `.env.example` to `.env` and update values for your local or deployment environment.
 
 | Variable | Purpose |
-|---|---|
+| --- | --- |
 | `SECRET_KEY` | Django secret key |
 | `JWT_SIGNING_KEY` | Signing key for JWT tokens |
-| `DEBUG` | Enables/disables debug mode |
+| `DEBUG` | Enables or disables debug mode |
 | `ALLOWED_HOSTS` | Comma-separated allowed hosts |
 | `POSTGRES_DB` | Database name |
 | `POSTGRES_USER` | Database user |
@@ -102,46 +102,49 @@ Configuration is loaded via `django-environ`. Copy `.env.example` to `.env` and 
 | `DB_HOST` | Database host (`db` in Docker) |
 | `DB_PORT` | Database port |
 
-`.env` is git-ignored; `.env.example` is the only committed reference.
+> `.env` is ignored by Git. `.env.example` should remain the only committed environment reference file.
 
-## Running with Docker
+## ▶️ Running the Project
+
+### With Docker
 
 ```bash
 cp .env.example .env
 docker compose up --build
 ```
 
-`entrypoint.sh` runs migrations and `collectstatic` before starting Gunicorn. Once the containers are up:
+Once the containers are running, the application and documentation are available at:
 
-```
-http://localhost:8000/
-```
+- Application: `http://localhost:8000/`
+- Swagger UI: `http://localhost:8000/api/docs/`
 
-## Running Locally (without Docker)
+### Locally (without Docker)
 
-Requires a PostgreSQL instance reachable with the credentials set in `.env`.
+A PostgreSQL instance is required and must match the credentials defined in `.env`.
 
 ```bash
 python -m venv venv
 source venv/bin/activate
-
 pip install -r requirements.txt
-
 cp .env.example .env
-
 python manage.py migrate
 python manage.py runserver
 ```
 
-## Running Tests
+After startup, open:
+
+- Application: `http://localhost:8000/`
+- Swagger UI: `http://localhost:8000/api/docs/`
+
+## 🧪 Running Tests
 
 ```bash
 pytest
 ```
 
-Tests are organized per app under each app's `tests/` directory, using factory_boy for fixtures. Configuration lives in `pytest.ini`.
+Tests are organized by app and supported with `factory_boy` fixtures. Global pytest configuration is defined in `pytest.ini`.
 
-## Code Quality
+## 🔍 Code Quality
 
 ```bash
 ruff check .
@@ -149,22 +152,28 @@ black --check .
 mypy .
 ```
 
-## Security & Configuration
+## 🔐 Security & Configuration Notes
 
-- Secrets (Django secret key, JWT signing key, database credentials) are read from environment variables, never hardcoded.
-- `.env` is excluded from version control; only `.env.example` is committed.
-- `DEBUG` is environment-driven and expected to be `False` outside local development.
-- This reflects sound baseline configuration hygiene, not a certified production security posture.
+- Secrets such as the Django secret key, JWT signing key, and database credentials are loaded from environment variables
+- `.env` is excluded from version control
+- `DEBUG` is environment-driven and should be disabled outside local development
+- The repository follows sound baseline configuration practices, though additional production hardening would still be expected for a live deployment
 
-## Current Status
+## 🤖 AI-Assisted Engineering Workflow
 
-Mediva Cloud is a working backend API: domain modeling, JWT auth, a documented REST interface, a Dockerized PostgreSQL setup, and a test suite are all in place. It's structured for technical review and for further hardening toward a production deployment, rather than presented as a finished production system.
+This project used **Claude Code** as part of an AI-assisted engineering workflow to support development, refactoring, and documentation improvements. The workflow emphasized:
 
-## AI-Assisted Development Workflow
+- clean architecture through the **service/selector pattern**
+- alignment with **Django and Django REST Framework best practices**
+- structured iteration on implementation and documentation quality
 
-Parts of this project's development process used Claude Code as an engineering assistant — for structured architecture discussions, refactoring support around the service/selector split, test scaffolding, and documentation refinement. All architectural decisions, generated code, and test coverage were reviewed and validated manually before being merged. AI tooling was used to support the workflow, not to replace engineering judgment.
+All generated or assisted changes were reviewed manually before being accepted.
 
-## Author
+## 📌 Current Status
 
-**Backend Developer:** Reza
+Mediva Cloud is a functional backend API with domain modeling, JWT authentication, interactive API documentation, Docker-based infrastructure, and automated tests in place. It is well-positioned for technical review and future production hardening.
+
+## 👤 Author
+
+**Backend Developer:** Reza  
 **Focus:** Django, Django REST Framework, Docker, PostgreSQL, API architecture
